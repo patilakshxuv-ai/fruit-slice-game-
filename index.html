@@ -1,28 +1,162 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="google-adsense-account" content="ca-pub-7950440884088062">
-  <title>Fruit Slice Nine</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #101b16;
-      color: white;
-      text-align: center;
-      padding: 60px 20px;
-    }
-    h1 { color: #8df59a; }
-    p { line-height: 1.7; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Fruit Slice – Browser Arcade Challenge</title>
+  <meta name="description" content="Addictive browser-based fruit slicing arcade game. Swipe to slice delicious fruits, rack up huge combos, and avoid the bombs!">
+  <meta name="theme-color" content="#2e1c0c">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>Fruit Slice Nine</h1>
-  <p>Welcome to Fruit Slice Nine!</p>
-  <p>A fun fruit-slicing game experience.</p>
-  <p>Game website coming soon.</p>
+
+  <!-- Main Game Container -->
+  <main id="game-wrapper" role="application" aria-label="Fruit Slice Arcade Game">
+    <!-- Active Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- In-Game HUD -->
+    <header id="hud" class="hidden">
+      <!-- Score Display -->
+      <div class="hud-left hud-interactive">
+        <div class="hud-score-card">
+          <span class="hud-score-icon" aria-hidden="true">🍉</span>
+          <span id="hud-score-val" class="hud-score-text">0</span>
+        </div>
+      </div>
+
+      <!-- Center Status (Strikes or Zen Timer) -->
+      <div class="hud-center">
+        <!-- Classic Mode 3 Strikes -->
+        <div id="hud-strikes" class="hud-strikes-container">
+          <span id="strike-1" class="strike-icon" aria-hidden="true">⭕</span>
+          <span id="strike-2" class="strike-icon" aria-hidden="true">⭕</span>
+          <span id="strike-3" class="strike-icon" aria-hidden="true">⭕</span>
+        </div>
+
+        <!-- Zen Mode 60s Countdown Timer -->
+        <div id="hud-timer" class="hud-timer-container hidden">
+          <span aria-hidden="true">⏱️</span>
+          <span id="hud-timer-val">1:00</span>
+        </div>
+      </div>
+
+      <!-- Right Controls (Sound & Pause) -->
+      <div class="hud-right hud-interactive">
+        <button id="btn-sound-toggle" class="btn-hud-round" aria-label="Toggle Sound" title="Toggle Sound">🔊</button>
+        <button id="btn-pause" class="btn-hud-round" aria-label="Pause Game" title="Pause Game">⏸</button>
+      </div>
+    </header>
+
+    <!-- Start Menu Screen -->
+    <section id="menu-screen" class="menu-layer" aria-label="Main Menu">
+      <div class="menu-brand">
+        <h1 class="game-title">FRUIT SLICE</h1>
+        <div class="game-subtitle">Arcade Blade Challenge</div>
+      </div>
+
+      <div class="menu-card">
+        <!-- Classic Mode Button -->
+        <button id="btn-play-classic" class="mode-btn btn-classic">
+          <span class="mode-btn-icon" aria-hidden="true">⚔️</span>
+          <div class="mode-btn-info">
+            <div class="mode-btn-title">CLASSIC MODE</div>
+            <div class="mode-btn-sub">3 Strikes • Slicing Combos • Avoid Bombs!</div>
+          </div>
+        </button>
+
+        <!-- Zen Mode Button -->
+        <button id="btn-play-zen" class="mode-btn btn-zen">
+          <span class="mode-btn-icon" aria-hidden="true">⏱️</span>
+          <div class="mode-btn-info">
+            <div class="mode-btn-title">ZEN MODE</div>
+            <div class="mode-btn-sub">60s Speedrun • No Bombs • Pure Frenzy</div>
+          </div>
+        </button>
+
+        <!-- Rules Notice -->
+        <div class="menu-rules-box">
+          <span class="menu-rules-icon" aria-hidden="true">💣</span>
+          <span><b>Rule:</b> Slicing a bomb or dropping 3 un-sliced fruits ends Classic mode!</span>
+        </div>
+
+        <!-- High Score Tracking -->
+        <div class="menu-highscores">
+          <div class="score-cell">
+            <div class="score-cell-label">Classic Best</div>
+            <div id="menu-highscore-classic" class="score-cell-val">0</div>
+          </div>
+          <div class="score-cell">
+            <div class="score-cell-label">Zen Best</div>
+            <div id="menu-highscore-zen" class="score-cell-val">0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pause Modal -->
+    <div id="pause-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+      <div class="modal-dialog">
+        <h2 id="pause-title" class="modal-title">GAME PAUSED</h2>
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button id="btn-resume" class="btn-arcade-action btn-arcade-primary">RESUME</button>
+          <button id="btn-restart-pause" class="btn-arcade-action btn-arcade-secondary">RESTART</button>
+          <button id="btn-quit-pause" class="btn-arcade-action btn-arcade-secondary">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameover-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="go-title">
+      <div class="modal-dialog">
+        <h2 id="go-title" class="modal-title">GAME OVER</h2>
+        <div id="go-new-high" class="new-record-badge hidden">🏆 NEW BEST RECORD!</div>
+
+        <div id="go-final-score" class="final-score-display">0</div>
+
+        <div class="go-stats-grid">
+          <div class="go-stat-box">
+            <div class="go-stat-lbl">High Score</div>
+            <div id="go-best-score" class="go-stat-num">0</div>
+          </div>
+          <div class="go-stat-box">
+            <div class="go-stat-lbl">Fruits Sliced</div>
+            <div id="go-sliced-count" class="go-stat-num">0</div>
+          </div>
+          <div class="go-stat-box">
+            <div class="go-stat-lbl">Max Combo</div>
+            <div id="go-max-combo" class="go-stat-num">0x</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-gameover-restart" class="btn-arcade-action btn-arcade-primary">PLAY AGAIN</button>
+          <button id="btn-gameover-menu" class="btn-arcade-action btn-arcade-secondary">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- First-Time Instruction Tutorial Overlay -->
+    <aside id="tutorial-overlay" class="hidden" aria-label="How to play instructions">
+      <div class="tutorial-card">
+        <div class="tutorial-icon" aria-hidden="true">👆</div>
+        <h3 class="tutorial-title">SWIPE TO SLICE</h3>
+        <p class="tutorial-desc">
+          Swipe your finger or mouse across flying fruits to slice them into delicious juicy halves!<br><br>
+          Slice multiple fruits in one swipe for <b>COMBO BONUSES</b>.<br>
+          <b>AVOID BOMBS!</b>
+        </p>
+        <div class="tutorial-tap-prompt">TAP ANYWHERE TO PLAY</div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Game Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/fruit.js"></script>
+  <script src="js/blade.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/game.js"></script>
+
 </body>
 </html>
