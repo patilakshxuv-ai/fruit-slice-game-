@@ -158,6 +158,47 @@
   <script src="js/blade.js"></script>
   <script src="js/particles.js"></script>
   <script src="js/game.js"></script>
+  <script>
+    window.addEventListener("load", () => {
+      const adsenseScript = document.createElement("script");
+      adsenseScript.async = true;
+      adsenseScript.crossOrigin = "anonymous";
+      adsenseScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950440884088062";
+      adsenseScript.addEventListener("load", () => {
+        const adUnits = [
+          { slot: "6304951178", format: "autorelaxed" },
+          { slot: "7697748881", layout: "in-article", format: "fluid", centered: true },
+          { slot: "7618032841", format: "fluid", layoutKey: "-6t+ed+2i-1n-4w" },
+          { slot: "7650656586", format: "auto", responsive: true }
+        ];
+        const adSection = document.createElement("section");
+        adSection.setAttribute("aria-label", "Advertisements");
+        adSection.style.cssText = "box-sizing:border-box;width:100%;padding:16px";
+
+        for (const unit of adUnits) {
+          const ad = document.createElement("ins");
+          ad.className = "adsbygoogle";
+          ad.style.display = "block";
+          ad.dataset.adClient = "ca-pub-7950440884088062";
+          ad.dataset.adSlot = unit.slot;
+          ad.dataset.adFormat = unit.format;
+          if (unit.layout) ad.dataset.adLayout = unit.layout;
+          if (unit.layoutKey) ad.dataset.adLayoutKey = unit.layoutKey;
+          if (unit.centered) ad.style.textAlign = "center";
+          if (unit.responsive) ad.dataset.fullWidthResponsive = "true";
+          adSection.append(ad);
+        }
+
+        document.body.append(adSection);
+        window.adsbygoogle = window.adsbygoogle || [];
+        for (const unit of adUnits) window.adsbygoogle.push({});
+      });
+      adsenseScript.addEventListener("error", () => {
+        console.error("Failed to load the Google AdSense script.");
+      });
+      document.head.append(adsenseScript);
+    });
+  </script>
 
 </body>
 </html>
