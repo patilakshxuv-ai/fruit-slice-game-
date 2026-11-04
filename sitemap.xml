@@ -3,4 +3,16 @@
   <url>
     <loc>https://fruit-slice-2.vercel.app/</loc>
   </url>
+  <url>
+    <loc>https://fruit-slice-2.vercel.app/about</loc>
+  </url>
+  <url>
+    <loc>https://fruit-slice-2.vercel.app/contact</loc>
+  </url>
+  <url>
+    <loc>https://fruit-slice-2.vercel.app/privacy</loc>
+  </url>
+  <url>
+    <loc>https://fruit-slice-2.vercel.app/terms</loc>
+  </url>
 </urlset>
